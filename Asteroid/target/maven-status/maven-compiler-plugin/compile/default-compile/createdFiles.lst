@@ -1,0 +1,6 @@
+dk/sdu/cbse/asteroidsfx/asteroid/AsteroidSize.class
+dk/sdu/cbse/asteroidsfx/asteroid/AsteroidEntity.class
+dk/sdu/cbse/asteroidsfx/asteroid/AsteroidSpawnerService.class
+dk/sdu/cbse/asteroidsfx/asteroid/AsteroidSpawnerProvider.class
+module-info.class
+dk/sdu/cbse/asteroidsfx/asteroid/Asteroid.class
