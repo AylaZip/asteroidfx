@@ -24,7 +24,10 @@ public class PlayerEntity implements IEntity, ICollidable {
     private boolean wasWaveActive = false;
     private double invulnerabilityTimer = 0;
     private double spawnProtectionTimer = 0;
-    private static final double INVULNERABILITY_DURATION = 2.0;
+    private boolean isBlinkingInvulnerability = false;
+    private static final double LIFE_LOSS_INVULNERABILITY = 3.0;
+    private static final double HITPOINT_PROTECTION = 1.0;
+    private int health = 3;
 
     public PlayerEntity(IGameContext context) {
         this.context = context;
@@ -34,9 +37,15 @@ public class PlayerEntity implements IEntity, ICollidable {
     public void update(double dt) {
         if (invulnerabilityTimer > 0) {
             invulnerabilityTimer -= dt;
+            if (invulnerabilityTimer <= 0) {
+                isBlinkingInvulnerability = false;
+            }
         }
         if (spawnProtectionTimer > 0) {
             spawnProtectionTimer -= dt;
+            if (spawnProtectionTimer <= 0) {
+                isBlinkingInvulnerability = false;
+            }
         }
 
         boolean isWaveActive = context.getGameFlowListener().isWaveActive();
@@ -46,7 +55,8 @@ public class PlayerEntity implements IEntity, ICollidable {
         }
 
         if (isWaveActive && !wasWaveActive) {
-            spawnProtectionTimer = INVULNERABILITY_DURATION;
+            spawnProtectionTimer = LIFE_LOSS_INVULNERABILITY;
+            isBlinkingInvulnerability = false;
         }
 
         wasWaveActive = isWaveActive;
@@ -102,7 +112,8 @@ public class PlayerEntity implements IEntity, ICollidable {
 
     @Override
     public void draw(IRenderer renderer) {
-        if (invulnerabilityTimer > 0 && (System.currentTimeMillis() % 200 < 100)) {
+        // Only blink if we are in the "blinking" invulnerability state (after life loss or spawn)
+        if (isBlinkingInvulnerability && (invulnerabilityTimer > 0 || spawnProtectionTimer > 0) && (System.currentTimeMillis() % 200 < 100)) {
             return;
         }
 
@@ -156,14 +167,27 @@ public class PlayerEntity implements IEntity, ICollidable {
             }
             
             if (hit) {
-                invulnerabilityTimer = INVULNERABILITY_DURATION;
-                context.getGameFlowListener().onPlayerDeath();
+                health--;
+                
+                if (health <= 0) {
+                    context.getGameFlowListener().onPlayerDeath();
+                    health = 3; 
+                    invulnerabilityTimer = LIFE_LOSS_INVULNERABILITY;
+                    isBlinkingInvulnerability = true;
+                } else {
+                    invulnerabilityTimer = HITPOINT_PROTECTION;
+                    isBlinkingInvulnerability = false;
+                    System.out.println("Player hit! Health left: " + health);
+                }
             }
         }
     }
 
     private void resetPosition() {
-        x = 400; y = 300; velocityX = 0; velocityY = 0; angle = 0;
+        x = 400; y = 300; velocityX = 0; velocityY = 0; angle = 0; health = 3;
+        invulnerabilityTimer = 0;
+        spawnProtectionTimer = 0;
+        isBlinkingInvulnerability = false;
     }
 
     @Override public CollisionType getCollisionType() { return CollisionType.PLAYER; }
