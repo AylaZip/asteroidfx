@@ -1,3 +1,6 @@
+/**
+ * This module checks if things hit each other.
+ */
 module Collision {
     requires Common;
 

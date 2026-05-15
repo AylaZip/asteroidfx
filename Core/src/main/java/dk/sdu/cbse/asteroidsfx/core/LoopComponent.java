@@ -33,10 +33,12 @@ public final class LoopComponent {
 
             context.getInput().beginFrame();
 
+            // Make a copy of entities so we don't get errors if the list changes
             List<IEntity> entities = List.copyOf(context.getWorld().getEntities());
 
             for (IEntity e : entities) e.update(dt);
 
+            // Wait for JavaFX to finish drawing before we continue
             CountDownLatch renderDone = new CountDownLatch(1);
             AtomicReference<Throwable> renderError = new AtomicReference<>();
             Platform.runLater(() -> {

@@ -1,3 +1,6 @@
+/**
+ * This module draws everything on the screen using JavaFX.
+ */
 module Render {
     requires transitive Common;
     requires transitive javafx.graphics;

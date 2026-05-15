@@ -1,3 +1,6 @@
+/**
+ * This module is for the enemy ships.
+ */
 module Enemy {
     requires Common;
 
