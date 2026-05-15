@@ -31,11 +31,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        // Start Spring to help manage our game parts
         context = new AnnotationConfigApplicationContext(GameConfig.class);
 
         var root = new Pane();
         var scene = new Scene(root, 800, 600);
         
+        // Find the Input service. If not found, use a 'Null' version so it doesn't crash.
         var inputProvider = context.getBean(IInputServiceProvider.class);
         var input = (inputProvider != null) ? inputProvider.create(scene) : new NullInputService();
         if (input instanceof NullInputService) {
@@ -48,6 +50,7 @@ public class Main extends Application {
         var canvas = new Canvas(800, 600);
         root.getChildren().add(canvas);
 
+        // Find the Renderer. If not found, use a 'Null' version.
         var rendererProvider = context.getBean(IRendererProvider.class);
         IRenderer renderer = (rendererProvider != null) ? rendererProvider.create(canvas.getGraphicsContext2D()) : new NullRenderer();
         if (renderer instanceof NullRenderer) {
@@ -71,6 +74,7 @@ public class Main extends Application {
         var hudSystem = new HudSystem(gameFlowSystem, renderer);
         world.addEntity(hudSystem);
 
+        // Start all the game plugins we found
         Collection<? extends IGamePlugin> plugins = context.getBean("gamePlugins", Collection.class);
         System.out.println("Plugins loaded via Spring: " + plugins.size());
         
@@ -79,6 +83,7 @@ public class Main extends Application {
             plugin.start(gameContext);
         }
 
+        // Setup and start the game loop thread
         loop = new LoopComponent();
         loop.start();
         Thread gameThread = new Thread(() -> loop.run(gameContext), "game-loop");

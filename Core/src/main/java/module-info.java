@@ -1,3 +1,6 @@
+/**
+ * This is the main part of the game that runs the loop and connects everything.
+ */
 module Core {
     requires transitive javafx.graphics;
 

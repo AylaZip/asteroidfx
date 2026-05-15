@@ -1,3 +1,6 @@
+/**
+ * This module is for the player's ship.
+ */
 module Player {
     requires Common;
 

@@ -1,3 +1,6 @@
+/**
+ * This module handles bullets and how they are spawned.
+ */
 module Bullet {
     requires Common;
 

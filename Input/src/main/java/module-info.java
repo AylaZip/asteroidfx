@@ -1,3 +1,6 @@
+/**
+ * This module reads keyboard input.
+ */
 module Input {
     requires Common;
     requires javafx.graphics;
