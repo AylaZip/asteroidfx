@@ -33,12 +33,17 @@ public class GameConfig {
     }
 
     private ModuleLayer createLayer() {
+        System.out.println("[INFO] ModuleLayer observer detected changes in '/plugins'");
         Path pluginsDir = Paths.get("plugins");
         ModuleFinder finder = ModuleFinder.of(pluginsDir);
         Set<String> roots = finder.findAll().stream()
                 .map(ModuleReference::descriptor)
                 .map(ModuleDescriptor::name)
                 .collect(Collectors.toSet());
+
+        for (String root : roots) {
+            System.out.println("[INFO] Discovered new module: " + root);
+        }
 
         java.lang.module.Configuration configuration = ModuleLayer.boot()
                 .configuration()

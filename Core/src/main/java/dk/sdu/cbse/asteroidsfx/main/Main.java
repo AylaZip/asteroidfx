@@ -76,11 +76,15 @@ public class Main extends Application {
 
         // Start all the game plugins we found
         Collection<? extends IGamePlugin> plugins = context.getBean("gamePlugins", Collection.class);
-        System.out.println("Plugins loaded via Spring: " + plugins.size());
+        System.out.println("[INFO] ServiceLoader resolved " + plugins.size() + " provider(s) for IGamePlugin");
         
         for (IGamePlugin plugin : plugins) {
-            System.out.println("Starting plugin: " + plugin.getName());
+            String pluginName = plugin.getClass().getSimpleName();
+            System.out.println("[INFO] Executing " + pluginName + ".start(context) ...");
+            
             plugin.start(gameContext);
+            
+            System.out.println("[INFO] Successfully injected entities from " + pluginName + " into GameWorld");
         }
 
         // Setup and start the game loop thread
